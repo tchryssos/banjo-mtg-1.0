@@ -5,7 +5,8 @@ const syllableCounter = (phrase) => {
 	}
 	phrase = phrase.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
 	phrase = phrase.replace(/^y/, '')
-	return phrase.match(/[aeiouy]{1,2}/g).length
+	const parsedSyl = phrase.match(/[aeiouy]{1,2}/g)
+	return parsedSyl ? parsedSyl.length : 0
 }
 
 // Audio
@@ -21,9 +22,9 @@ const generateErrorHTML = (error) => (
 )
 
 // Responding to card data
-const banjoSpeakAndSet = (text, cardDescriptionEl) => {
+const banjoSpeakAndSet = (text, cardDesc) => {
 	const words = text.split(/\s/)
-	let banjoPause = 0
+	let banjoPause = 1
 	words.forEach(
 		(word) => {
 			setTimeout(() => {
@@ -32,16 +33,16 @@ const banjoSpeakAndSet = (text, cardDescriptionEl) => {
 				for (i = 0; i < syl; i++) {
 					playBanjo()
 				}
-				cardDescriptionEl.innerHTML += word
+				cardDesc.innerHTML += ` ${word}`
 			}, banjoPause)
 		}
 	)
 }
 
-const cardSuccess = (response, cardTitleEl, cardDescEl) => {
+const cardSuccess = (response, cardTitle, cardDesc) => {
 	const card = response.data.card
-	cardTitleEl.innerHTML = `<h2>${card.name}</h2>`
-	banjoSpeakAndSet(card.text, cardDescEl)
+	cardTitle.innerHTML = `<h2>${card.name}</h2>`
+	banjoSpeakAndSet(card.text, cardDesc)
 }
 
 // Getting a card from form
