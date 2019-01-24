@@ -1,12 +1,12 @@
 const syllableCounter = (word) => {
 	word = word.toLowerCase()
 	if (word.length <= 3) {
-		return 1
+		return ['']
 	}
 	word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
 	word = word.replace(/^y/, '')
-	const parsedSyl = word.match(/[aeiouy]{1,2}/g)
-	return parsedSyl ? parsedSyl.length : 1
+	const parsedSyllables = word.match(/[aeiouy]{1,2}/g)
+	return parsedSyllables || [] 
 }
 
 // Audio
@@ -25,11 +25,11 @@ const playBanjo = (audio) => {
 	audio.play()
 }
 
-const banjoSpeakAndPushSyllable = (word, audio, syllables, cardDesc) => {
-	for (i = 0; i < syllables; i++) {
+const banjoSpeakAndPushSyllable = (word, audio, cardDesc) => {
+	for (let i = 0; i < audio.length; i++) {
 		setTimeout(() => {
-			playBanjo(audio)
-		}, (i * audio.duration * 1000))
+			playBanjo(audio[i])
+		}, (i * audio[i].duration * 1000))
 	}
 	cardDesc.innerHTML += ` ${word}`
 }
@@ -38,18 +38,18 @@ const banjoSpeakAndPushSyllable = (word, audio, syllables, cardDesc) => {
 const banjoSpeakAndSet = (text, cardDesc) => {
 	const words = text.split(/\s/)
 	let banjoPause = 1
-	let syllablesCount = 0
 	words.forEach(
 		(word) => {
-			const audio = banjoPicker()
 			const syllables = syllableCounter(word)
+			const audio = syllables.map(syl => banjoPicker())
+			const audioDuration = Math.ceil(audio.reduce(
+				(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
+			))
 			setTimeout(
-				() => banjoSpeakAndPushSyllable(word, audio, syllables, cardDesc),
+				() => banjoSpeakAndPushSyllable(word, audio, cardDesc),
 				banjoPause
 			)
-
-			syllablesCount += syllables
-			banjoPause = syllablesCount * Math.round(audio.duration * 1000)
+			banjoPause += audioDuration
 		}
 	)
 }
