@@ -37,7 +37,7 @@ const banjoSpeakAndPushSyllable = (word, audio, cardDesc) => {
 // Responding to card data
 const banjoSpeakAndSet = (text, cardDesc) => {
 	const words = text.split(/\s/)
-	let banjoPause = 1
+	let banjoPause = 0
 	words.forEach(
 		(word) => {
 			const syllables = syllableCounter(word)
