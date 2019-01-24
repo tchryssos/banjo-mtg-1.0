@@ -25,32 +25,31 @@ const playBanjo = (audio) => {
 	audio.play()
 }
 
-// Generating Response HTML
-const generateErrorHTML = (error) => (
-	'<h2>Error!</h2>' +
-	`<p>${error.message}</p>`
-)
+const banjoSpeakAndPushSyllable = (word, audio, syllables, cardDesc) => {
+	for (i = 0; i < syllables; i++) {
+		setTimeout(() => {
+			playBanjo(audio)
+		}, (i * audio.duration * 1000))
+	}
+	cardDesc.innerHTML += ` ${word}`
+}
 
 // Responding to card data
 const banjoSpeakAndSet = (text, cardDesc) => {
 	const words = text.split(/\s/)
 	let banjoPause = 1
-	let sylCount = 0
+	let syllablesCount = 0
 	words.forEach(
 		(word) => {
 			const audio = banjoPicker()
-			setTimeout(() => {
-				for (i = 0; i < syl; i++) {
-					setTimeout(() => {
-						playBanjo(audio)
-					}, (i * audio.duration * 1000))
-				}
-				cardDesc.innerHTML += ` ${word}`
-			}, banjoPause)
+			const syllables = syllableCounter(word)
+			setTimeout(
+				() => banjoSpeakAndPushSyllable(word, audio, syllables, cardDesc),
+				banjoPause
+			)
 
-			const syl = syllableCounter(word)
-			sylCount += syl
-			banjoPause = sylCount * (audio.duration * 1000)
+			syllablesCount += syllables
+			banjoPause = syllablesCount * Math.round(audio.duration * 1000)
 		}
 	)
 }
@@ -60,6 +59,12 @@ const cardSuccess = (response, cardTitle, cardDesc) => {
 	cardTitle.innerHTML = `<h2>${card.name}</h2>`
 	banjoSpeakAndSet(card.text, cardDesc)
 }
+
+// Generating Error HTML
+const generateErrorHTML = (error) => (
+	'<h2>Error!</h2>' +
+	`<p>${error.message}</p>`
+)
 
 // Getting a card from form
 const getCard = () => {
