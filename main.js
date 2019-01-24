@@ -1,12 +1,12 @@
-const syllableCounter = (phrase) => {
-	phrase = phrase.toLowerCase()
-	if (phrase.length <= 3) {
+const syllableCounter = (word) => {
+	word = word.toLowerCase()
+	if (word.length <= 3) {
 		return 1
 	}
-	phrase = phrase.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
-	phrase = phrase.replace(/^y/, '')
-	const parsedSyl = phrase.match(/[aeiouy]{1,2}/g)
-	return parsedSyl ? parsedSyl.length : 0
+	word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
+	word = word.replace(/^y/, '')
+	const parsedSyl = word.match(/[aeiouy]{1,2}/g)
+	return parsedSyl ? parsedSyl.length : 1
 }
 
 // Audio
@@ -22,7 +22,7 @@ const banjoPicker = () => {
 const playBanjo = (audio) => {
 	audio.pause()
 	audio.currentTime = 0
-	return audio.play()
+	audio.play()
 }
 
 // Generating Response HTML
@@ -41,7 +41,9 @@ const banjoSpeakAndSet = (text, cardDesc) => {
 			const audio = banjoPicker()
 			setTimeout(() => {
 				for (i = 0; i < syl; i++) {
-					playBanjo(audio)
+					setTimeout(() => {
+						playBanjo(audio)
+					}, (i * audio.duration * 1000))
 				}
 				cardDesc.innerHTML += ` ${word}`
 			}, banjoPause)
@@ -49,7 +51,6 @@ const banjoSpeakAndSet = (text, cardDesc) => {
 			const syl = syllableCounter(word)
 			sylCount += syl
 			banjoPause = sylCount * (audio.duration * 1000)
-			console.log(banjoPause)
 		}
 	)
 }
