@@ -24,6 +24,7 @@ const cardSuccess = (response, cardDisplayElement) => {
 	const card = response.data.card
 	cardDisplayElement.innerHTML = generateCardHTML(card)
 	const syllableCount = syllableCounter(card.text)
+	playBanjo()
 }
 
 // Getting a card from form
