@@ -10,9 +10,19 @@ const syllableCounter = (phrase) => {
 }
 
 // Audio
-const playBanjo = () => {
-	const audio = document.getElementById('banjoWav')
-	audio.play()
+const banjoPicker = () => {
+	const banjoLo = document.getElementById('banjoLo')
+	const banjoMid = document.getElementById('banjoMid')
+	const banjoHi = document.getElementById('banjoHi')
+	const banjoArray = [
+		banjoLo, banjoMid, banjoHi
+	]
+	return banjoArray[Math.floor(Math.random() * 3)]
+}
+const playBanjo = (audio) => {
+	audio.pause()
+	audio.currentTime = 0
+	return audio.play()
 }
 
 // Generating Response HTML
@@ -25,16 +35,21 @@ const generateErrorHTML = (error) => (
 const banjoSpeakAndSet = (text, cardDesc) => {
 	const words = text.split(/\s/)
 	let banjoPause = 1
+	let sylCount = 0
 	words.forEach(
 		(word) => {
+			const audio = banjoPicker()
 			setTimeout(() => {
-				const syl = syllableCounter(word)
-				banjoPause = syl * 500
 				for (i = 0; i < syl; i++) {
-					playBanjo()
+					playBanjo(audio)
 				}
 				cardDesc.innerHTML += ` ${word}`
 			}, banjoPause)
+
+			const syl = syllableCounter(word)
+			sylCount += syl
+			banjoPause = sylCount * (audio.duration * 1000)
+			console.log(banjoPause)
 		}
 	)
 }
