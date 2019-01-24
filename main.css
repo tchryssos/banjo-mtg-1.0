@@ -5,6 +5,10 @@
     align-items: center;
 }
 
+.width50 {
+    width: 50%;
+}
+
 .pageContainer {
     height: 100%;
     width: 100%;
@@ -21,8 +25,4 @@
 
 .formContainer {
     width: 100%;
-}
-
-#cardResponse {
-    width: 50%;
 }
