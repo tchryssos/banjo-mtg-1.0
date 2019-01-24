@@ -7,16 +7,15 @@
 	<meta name="description" content="Banjo reads MTG cards">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-	<script src="js/main.js"></script>
-	<script src="js/audio.js"></script>
+	<script src="main.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
 	<div class="pageContainer container">
 		<img src="assets/banjo_dab.png" class="banjoImg" />
-		<!-- <audio controls src="assets/banjo.wav">
+		<audio id="banjoWav" src="assets/banjo.wav">
 			Your browser does not support the <code>audio</code> element.
-		</audio> -->
+		</audio>
 		<p>Enter the Multiverse ID of a Magic the Gathering card to hear Banjo read the card text!</p>
 		<div class="formContainer container">
 				<input
@@ -26,7 +25,10 @@
 				/>
 				<button onClick="getCard()">Submit</button>
 		</div>
-		<div id="cardResponse" class="container" />
+		<div class="container">
+				<div id="cardTitle" />
+				<p id="cardDescription" />
+		</div>
 	</div>
 </body>
 </html>
