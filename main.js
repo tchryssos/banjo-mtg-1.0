@@ -78,7 +78,11 @@ const getCard = () => {
 		.then((response) => (
 			cardSuccess(response, title, description)
 		))
-		.catch((error) => (
+		.catch((error) => {
 			title.innerHTML = generateErrorHTML(error)
-		))
+			const banjoError = document.getElementById('banjoFail')
+			banjoError.pause()
+			banjoError.currentTime = 0
+			banjoError.play()
+		})
 }
