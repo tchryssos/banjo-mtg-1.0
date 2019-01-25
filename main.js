@@ -1,12 +1,12 @@
 const syllableCounter = (word) => {
 	word = word.toLowerCase()
 	if (word.length <= 3) {
-		return ['']
+		return ['fallback']
 	}
 	word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
 	word = word.replace(/^y/, '')
 	const parsedSyllables = word.match(/[aeiouy]{1,2}/g)
-	return parsedSyllables || [] 
+	return parsedSyllables || ['fallback'] 
 }
 
 // Audio
