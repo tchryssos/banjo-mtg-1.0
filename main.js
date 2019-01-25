@@ -78,14 +78,8 @@ const banjoSpeakAndSet = (responseCardText) => {
 const cardSuccess = (response) => {
 	const card = response.data.card
 	cardTitle.innerHTML = `<h2>${card.name}</h2>`
-	banjoSpeakAndSet(card.text)
+	banjoSpeakAndSet(card.text || card.flavor)
 }
-
-// Generating Error HTML
-const generateErrorHTML = (error) => (
-	'<h2>Error!</h2>' +
-	`<p>${error.message}</p>`
-)
 
 // Getting a card from form
 const getCardSetup = () => {
@@ -109,10 +103,11 @@ const getCard = () => {
 			cardSuccess(response)
 		))
 		.catch((error) => {
-			cardTitle.innerHTML = generateErrorHTML(error)
 			const banjoError = document.getElementById('banjoFail')
 			banjoError.pause()
 			banjoError.currentTime = 0
 			banjoError.play()
+			cardTitle.innerHTML = '<h2>Error!</h2>'
+			cardDescription.innerHTML = error.message
 		})
 }
