@@ -8,6 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" media="screen" href="main.css" />
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<link href="https://fonts.googleapis.com/css?family=Gochi+Hand" rel="stylesheet">
 	<script src="main.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
@@ -20,7 +21,9 @@
 		<audio id="banjoMid" src="assets/BanjoMid.wav"></audio>
 		<audio id="banjoHi" src="assets/BanjoHi.wav"></audio>
 		<audio id="banjoFail" src="assets/banjoFail.wav"></audio>
-		<p>Enter the Multiverse ID of a Magic the Gathering card to hear Banjo read the card text!</p>
+		<div class="width75 centerText">
+			<p>Enter the Multiverse ID of a Magic the Gathering card to hear Banjo read the card text!</p>
+		</div>
 		<div class="formContainer container">
 				<input
 					type="number" 
@@ -31,7 +34,10 @@
 		</div>
 		<div class="container width50">
 				<div id="cardTitle" ></div>
-				<div id="cardDescription"></div>
+				<div id="descriptionContainer" class="descriptionContainer">
+					<img src="assets/banjoHead.png" class="banjoHead" />
+					<div id="cardDescription"></div>
+				</div>
 		</div>
 	</div>
 </body>

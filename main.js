@@ -36,6 +36,8 @@ const banjoSpeakAndPushSyllable = (word, audio, cardDesc) => {
 
 // Responding to card data
 const banjoSpeakAndSet = (text, cardDesc) => {
+	const descCon = document.getElementById('descriptionContainer')
+	descCon.style = "display: flex;"
 	const words = text.split(/\s/)
 	let banjoPause = 0
 	words.forEach(

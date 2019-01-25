@@ -1,3 +1,12 @@
+body {
+    font-family: 'Gochi Hand', cursive;
+    letter-spacing: 2px;
+    font-size: 24px;
+    background-image: url("assets/grass.jpg");
+    background-size: cover;
+}
+
+/* "Components" */
 .container {
     display: flex;
     flex-direction: column;
@@ -9,6 +18,15 @@
     width: 50%;
 }
 
+.width75 {
+    width: 75%;
+}
+
+.centerText {
+    text-align: center;
+}
+
+/* Specifics */
 .pageContainer {
     height: 100%;
     width: 100%;
@@ -19,10 +37,26 @@
     width: 300px;
 }
 
+.banjoHead {
+    height: 100px;
+    width: 100px;
+    margin-right: 8px;
+}
+
 .form {
     width: 50%;
 }
 
 .formContainer {
     width: 100%;
+}
+
+.descriptionContainer {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    display: none;
+    color: white;
+    width: 100%;
+    min-height: 2rem;
+    align-items: center
 }
