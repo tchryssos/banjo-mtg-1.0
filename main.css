@@ -60,7 +60,7 @@ body {
     margin-bottom: 8px;
 }
 
-.descriptionContainer {
+#descriptionContainer {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 25px;
     padding: 16px;
