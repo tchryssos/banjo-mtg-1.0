@@ -73,6 +73,8 @@ const getCard = () => {
 	const cardId = document.getElementById('cardId').value
 	const title = document.getElementById('cardTitle')
 	const description = document.getElementById('cardDescription')
+	const descCon = document.getElementById('descriptionContainer')
+	descCon.style.display = "none"
 	title.innerHTML = ''
 	description.innerHTML = ''
 
