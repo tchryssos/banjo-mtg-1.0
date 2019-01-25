@@ -15,8 +15,8 @@ const cardDescription = document.getElementById('cardDescription')
 const textBox = document.getElementById('textBox')
 
 // Timeouts
-let syllableTimeout
-let wordTimeout
+const syllableTimeouts = []
+const wordTimeouts = []
 
 // Syllable parser
 const syllableCounter = (word) => {
@@ -47,9 +47,9 @@ const stopAllAudio = () => (
 
 const banjoSpeakAndPushSyllable = (word, audio) => {
 	for (let i = 0; i < audio.length; i++) {
-		syllableTimeout = setTimeout(() => {
+		syllableTimeouts.push(setTimeout(() => {
 			playAudio(audio[i])
-		}, (i * audio[i].duration * 1000))
+		}, (i * audio[i].duration * 1000)))
 	}
 	cardDescription.innerHTML += ` ${word}`
 }
@@ -66,10 +66,10 @@ const banjoSpeakAndSet = (responseCardText) => {
 			const audioDuration = Math.ceil(audio.reduce(
 				(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
 			))
-			wordTimeout = setTimeout(
+			wordTimeouts.push(setTimeout(
 				() => banjoSpeakAndPushSyllable(word, audio),
 				banjoPause
-			)
+			))
 			banjoPause += audioDuration
 		}
 	)
@@ -92,8 +92,8 @@ const getCardSetup = () => {
 	textBox.style.display = "none"
 	cardTitle.innerHTML = ''
 	cardDescription.innerHTML = ''
-	clearTimeout(wordTimeout)
-	clearTimeout(syllableTimeout)
+	wordTimeouts.forEach(timeout => clearTimeout(timeout))
+	syllableTimeouts.forEach(timeout => clearTimeout(timeout))
 
 	banjoLo.src = loSource
 	banjoMid.src = midSource
