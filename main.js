@@ -1,14 +1,24 @@
 // Audio Elements
+const loSource = 'assets/banjoLo.wav'
+const midSource = 'assets/banjoMid.wav'
+const hiSource = 'assets/banjoHi.wav'
 const banjoLo = document.getElementById('banjoLo')
 const banjoMid = document.getElementById('banjoMid')
 const banjoHi = document.getElementById('banjoHi')
+const banjoSampleArray = [
+	banjoLo, banjoMid, banjoHi,
+]
 
 // Display Elements
 const cardTitle = document.getElementById('cardTitle')
 const cardDescription = document.getElementById('cardDescription')
 const textBox = document.getElementById('textBox')
 
+// Timeouts
+let syllableTimeout
+let wordTimeout
 
+// Syllable parser
 const syllableCounter = (word) => {
 	word = word.toLowerCase()
 	if (word.length <= 3) {
@@ -21,40 +31,42 @@ const syllableCounter = (word) => {
 }
 
 // Audio
-const banjoPicker = () => {
-	const banjoArray = [
-		banjoLo, banjoMid, banjoHi,
-	]
-	return banjoArray[Math.floor(Math.random() * 3)]
-}
-const playBanjo = (audio) => {
+const samplePicker = () => banjoSampleArray[Math.floor(Math.random() * 3)]
+
+const playAudio = (audio) => {
 	audio.pause()
 	audio.currentTime = 0
 	audio.play()
 }
 
+const stopAllAudio = () => (
+	banjoSampleArray.forEach(audio => (
+		audio.src=''
+	))
+)
+
 const banjoSpeakAndPushSyllable = (word, audio) => {
 	for (let i = 0; i < audio.length; i++) {
-		setTimeout(() => {
-			playBanjo(audio[i])
+		syllableTimeout = setTimeout(() => {
+			playAudio(audio[i])
 		}, (i * audio[i].duration * 1000))
 	}
 	cardDescription.innerHTML += ` ${word}`
 }
 
 // Responding to card data
-const banjoSpeakAndSet = (cardText) => {
+const banjoSpeakAndSet = (responseCardText) => {
 	textBox.style = "display: flex;"
-	const words = cardText.split(/\s/)
+	const words = responseCardText.split(/\s/)
 	let banjoPause = 0
 	words.forEach(
 		(word) => {
 			const syllables = syllableCounter(word)
-			const audio = syllables.map(syl => banjoPicker())
+			const audio = syllables.map(syl => samplePicker())
 			const audioDuration = Math.ceil(audio.reduce(
 				(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
 			))
-			setTimeout(
+			wordTimeout = setTimeout(
 				() => banjoSpeakAndPushSyllable(word, audio),
 				banjoPause
 			)
@@ -76,12 +88,22 @@ const generateErrorHTML = (error) => (
 )
 
 // Getting a card from form
-const getCard = () => {
-	const cardId = document.getElementById('cardId').value
+const getCardSetup = () => {
 	textBox.style.display = "none"
 	cardTitle.innerHTML = ''
 	cardDescription.innerHTML = ''
+	clearTimeout(wordTimeout)
+	clearTimeout(syllableTimeout)
 
+	banjoLo.src = loSource
+	banjoMid.src = midSource
+	banjoHi.src = hiSource
+}
+
+const getCard = () => {
+	stopAllAudio()
+	getCardSetup()
+	const cardId = document.getElementById('cardId').value
 	axios.get(`https://api.magicthegathering.io/v1/cards/${cardId}`)
 		.then((response) => (
 			cardSuccess(response)
