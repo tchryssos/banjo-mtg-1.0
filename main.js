@@ -18,16 +18,43 @@ const textBox = document.getElementById('textBox')
 const syllableTimeouts = []
 const wordTimeouts = []
 
-// Syllable parser
+// Syllable manipulation
 const syllableCounter = (word) => {
 	word = word.toLowerCase()
 	if (word.length <= 3) {
-		return ['fallback']
+		return ['fff']
 	}
 	word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
 	word = word.replace(/^y/, '')
 	const parsedSyllables = word.match(/[aeiouy]{1,2}/g)
-	return parsedSyllables || ['fallback'] 
+	return parsedSyllables || ['fff'] 
+}
+
+const syllableWordChunker = (word) => {
+	let wordChunkObj = {
+		remainingWord: word,
+		chunkedWord: [],
+	}
+	const sylBreaks = syllableCounter(word)
+	if (sylBreaks) {
+		wordChunkObj = sylBreaks.reduce(
+			(accObject, syllableBreak) => {
+				const regex = new RegExp(
+					'(^[^'+ syllableBreak + ']*' + syllableBreak + ')'
+				)
+				// This filter removes empty strings created when the regex test
+				// splits up a string on the first character
+				const split = accObject.remainingWord.split(regex).filter(x => x)
+				return {
+					remainingWord: split[1],
+					chunkedWord: [...accObject.chunkedWord, split[0]]
+				}
+			}, wordChunkObj
+		)
+	}
+	wordChunkObj.chunkedWord.push(wordChunkObj.remainingWord)
+	// This filter removes 'undefined' values created on line 49
+	return wordChunkObj.chunkedWord.filter(x => x)
 }
 
 // Audio
@@ -45,29 +72,39 @@ const stopAllAudio = () => (
 	))
 )
 
-const banjoSpeakAndPushSyllable = (word, audio) => {
+// Responding to card data
+const playSyllablePushWord = (syllables, audio) => {
 	for (let i = 0; i < audio.length; i++) {
 		syllableTimeouts.push(setTimeout(() => {
 			playAudio(audio[i])
+			cardDescription.innerHTML += syllables[i]
+			if (i === audio.length - 1) {
+				cardDescription.innerHTML += ' '
+			}
 		}, (i * audio[i].duration * 1000)))
 	}
-	cardDescription.innerHTML += ` ${word}`
 }
 
-// Responding to card data
 const banjoSpeakAndSet = (responseCardText) => {
 	textBox.style = "display: flex;"
 	const words = responseCardText.split(/\s/)
 	let banjoPause = 0
 	words.forEach(
 		(word) => {
-			const syllables = syllableCounter(word)
-			const audio = syllables.map(syl => samplePicker())
-			const audioDuration = Math.ceil(audio.reduce(
-				(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
-			))
+			const syllables = syllableWordChunker(word)
+			const audioArray = syllables.map(syl => samplePicker())
+			let audioDuration
+			if (audioArray.every(
+				sample => sample.duration
+			)) {
+				audioDuration = Math.ceil(audioArray.reduce(
+					(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
+				))
+			} else {
+				audioDuration = 0
+			}
 			wordTimeouts.push(setTimeout(
-				() => banjoSpeakAndPushSyllable(word, audio),
+				() => playSyllablePushWord(syllables, audioArray),
 				banjoPause
 			))
 			banjoPause += audioDuration
@@ -98,16 +135,24 @@ const getCard = () => {
 	stopAllAudio()
 	getCardSetup()
 	const cardId = document.getElementById('cardId').value
-	axios.get(`https://api.magicthegathering.io/v1/cards/${cardId}`)
-		.then((response) => (
-			cardSuccess(response)
-		))
-		.catch((error) => {
-			const banjoError = document.getElementById('banjoFail')
-			banjoError.pause()
-			banjoError.currentTime = 0
-			banjoError.play()
-			cardTitle.innerHTML = '<h2>Error!</h2>'
-			cardDescription.innerHTML = error.message
-		})
+	cardSuccess({
+		data: {
+			card: {
+				name: 'Good card',
+				text: 'Wow what an absolutely spicy card, this one is good to play'
+			}
+		}
+	})
+	// axios.get(`https://api.magicthegathering.io/v1/cards/${cardId}`)
+	// 	.then((response) => (
+	// 		cardSuccess(response)
+	// 	))
+	// 	.catch((error) => {
+	// 		const banjoError = document.getElementById('banjoFail')
+	// 		banjoError.pause()
+	// 		banjoError.currentTime = 0
+	// 		banjoError.play()
+	// 		cardTitle.innerHTML = '<h2>Error!</h2>'
+	// 		cardDescription.innerHTML = error.message
+	// 	})
 }
