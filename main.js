@@ -42,9 +42,12 @@ const syllableWordChunker = (word) => {
 				const regex = new RegExp(
 					'(^[^'+ syllableBreak + ']*' + syllableBreak + ')'
 				)
+				let split = ''
 				// This filter removes empty strings created when the regex test
 				// splits up a string on the first character
-				const split = accObject.remainingWord.split(regex).filter(x => x)
+				if (accObject.remainingWord) {
+					split = accObject.remainingWord.split(regex).filter(x => x)
+				}
 				return {
 					remainingWord: split[1],
 					chunkedWord: [...accObject.chunkedWord, split[0]]
