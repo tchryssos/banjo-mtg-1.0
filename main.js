@@ -21,13 +21,14 @@ const wordTimeouts = []
 // Syllable manipulation
 const syllableCounter = (word) => {
 	word = word.toLowerCase()
+	const oneSyl = ['fff']
 	if (word.length <= 3) {
-		return ['fff']
+		return oneSyl
 	}
 	word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
 	word = word.replace(/^y/, '')
 	const parsedSyllables = word.match(/[aeiouy]{1,2}/g)
-	return parsedSyllables || ['fff'] 
+	return parsedSyllables || oneSyl
 }
 
 const syllableWordChunker = (word) => {
@@ -61,6 +62,9 @@ const syllableWordChunker = (word) => {
 }
 
 // Audio
+const audioLoadedPromise = (audio) => audio.onloadedmetadata = () => Promise.resolve()
+const allAudioLoadedPromises = banjoSampleArray.map(audio => audioLoadedPromise(audio))
+
 const samplePicker = () => banjoSampleArray[Math.floor(Math.random() * 3)]
 
 const playAudio = (audio) => {
@@ -81,10 +85,11 @@ const playSyllablePushWord = (syllables, audioArray) => {
 		syllableTimeouts.push(setTimeout(() => {
 			playAudio(audioArray[i])
 			cardDescription.innerHTML += syllables[i]
+			// add a space if this is the last time through the loop
 			if (i === audioArray.length - 1) {
 				cardDescription.innerHTML += ' '
 			}
-		}, (i * (audioArray[i].duration || .05) * 1000)))
+		}, (i * (audioArray[i].duration || .5) * 1000)))
 	}
 }
 
@@ -92,27 +97,30 @@ const banjoSpeakAndSet = (responseCardText) => {
 	textBox.style = "display: flex;"
 	const words = responseCardText.split(/\s/)
 	let banjoPause = 0
-	words.forEach(
-		(word) => {
-			const syllables = syllableWordChunker(word)
-			const audioArray = syllables.map(syl => samplePicker())
-			let audioDuration
-			if (audioArray.every(
-				sample => sample.duration
-			)) {
-				audioDuration = Math.ceil(audioArray.reduce(
-					(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
+	Promise.all(allAudioLoadedPromises)
+	.then(() => (
+		words.forEach(
+			(word) => {
+				const syllables = syllableWordChunker(word)
+				const audioArray = syllables.map(syl => samplePicker())
+				let audioDuration
+				if (audioArray.every(
+					sample => sample.duration
+				)) {
+					audioDuration = Math.ceil(audioArray.reduce(
+						(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
+					))
+				} else {
+					audioDuration = 500
+				}
+				wordTimeouts.push(setTimeout(
+					() => playSyllablePushWord(syllables, audioArray),
+					banjoPause
 				))
-			} else {
-				audioDuration = 500
+				banjoPause += audioDuration
 			}
-			wordTimeouts.push(setTimeout(
-				() => playSyllablePushWord(syllables, audioArray),
-				banjoPause
-			))
-			banjoPause += audioDuration
-		}
-	)
+		)
+	))
 }
 
 const cardSuccess = (response) => {
