@@ -1,10 +1,10 @@
 // Audio Elements
-// const loSource = 'assets/banjoLo.wav'
-// const midSource = 'assets/banjoMid.wav'
-// const hiSource = 'assets/banjoHi.wav'
-const loSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoLo.wav'
-const midSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoMid.wav'
-const hiSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoHi.wav'
+const loSource = 'assets/BanjoLo.wav'
+const midSource = 'assets/BanjoMid.wav'
+const hiSource = 'assets/BanjoHi.wav'
+// const loSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoLo.wav'
+// const midSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoMid.wav'
+// const hiSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoHi.wav'
 const banjoLo = document.getElementById('banjoLo')
 const banjoMid = document.getElementById('banjoMid')
 const banjoHi = document.getElementById('banjoHi')
@@ -28,8 +28,13 @@ const syllableBreaker = (word) => {
 	if (word.length <= 3) {
 		return oneSyl
 	}
+	// The following lines replace all characters that aren't
+	// (commonly) syllable breakpoints with empty strings
+	// leaving us with an array of syllable break vowels
 	word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
 	word = word.replace(/^y/, '')
+	// The following line makes sure that of the remaining vowels
+	// we chunk on a maximum of two at a time
 	const parsedSyllables = word.match(/[aeiouy]{1,2}/g)
 	return parsedSyllables || oneSyl
 }
@@ -43,6 +48,8 @@ const syllableWordChunker = (word) => {
 	if (sylBreaks) {
 		wordChunkObj = sylBreaks.reduce(
 			(wordObj, syllableBreak) => {
+				// This builds a regex which selects a substring
+				// up to and including the current syllable break point
 				const regex = new RegExp(
 					'(^[^'+ syllableBreak + ']*' + syllableBreak + ')'
 				)
