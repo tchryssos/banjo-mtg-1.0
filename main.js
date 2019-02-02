@@ -22,7 +22,7 @@ const syllableTimeouts = []
 const wordTimeouts = []
 
 // Syllable manipulation
-const syllableCounter = (word) => {
+const syllableBreaker = (word) => {
 	word = word.toLowerCase()
 	const oneSyl = ['fff']
 	if (word.length <= 3) {
@@ -39,28 +39,28 @@ const syllableWordChunker = (word) => {
 		remainingWord: word,
 		chunkedWord: [],
 	}
-	const sylBreaks = syllableCounter(word)
+	const sylBreaks = syllableBreaker(word)
 	if (sylBreaks) {
 		wordChunkObj = sylBreaks.reduce(
-			(accObject, syllableBreak) => {
+			(wordObj, syllableBreak) => {
 				const regex = new RegExp(
 					'(^[^'+ syllableBreak + ']*' + syllableBreak + ')'
 				)
-				let split = ''
+				let split = []
 				// This filter removes empty strings created when the regex test
 				// splits up a string on the first character
-				if (accObject.remainingWord) {
-					split = accObject.remainingWord.split(regex).filter(x => x)
+				if (wordObj.remainingWord) {
+					split = wordObj.remainingWord.split(regex).filter(x => x)
 				}
 				return {
 					remainingWord: split[1],
-					chunkedWord: [...accObject.chunkedWord, split[0]]
+					chunkedWord: [...wordObj.chunkedWord, split[0]]
 				}
 			}, wordChunkObj
 		)
 	}
 	wordChunkObj.chunkedWord.push(wordChunkObj.remainingWord)
-	// This filter removes 'undefined' values created on line 49
+	// This filter removes falsey values pushed on the line above
 	return wordChunkObj.chunkedWord.filter(x => x)
 }
 
@@ -142,9 +142,7 @@ const getCard = () => {
 		))
 		.catch((error) => {
 			const banjoError = document.getElementById('banjoFail')
-			banjoError.pause()
-			banjoError.currentTime = 0
-			banjoError.play()
+			playAudio(banjoError)
 			cardTitle.innerHTML = '<h2>Error!</h2>'
 			cardDescription.innerHTML = error.message
 		})
