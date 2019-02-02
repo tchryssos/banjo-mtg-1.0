@@ -13,6 +13,7 @@ const banjoSampleArray = [
 const cardTitle = document.getElementById('cardTitle')
 const cardDescription = document.getElementById('cardDescription')
 const textBox = document.getElementById('textBox')
+const loadingIcon = document.getElementById('loadingIcon')
 
 // Timeouts
 // Timeouts get pushed into one of these two arrays so that we can do a 
@@ -132,6 +133,7 @@ const banjoSpeakAndSet = (responseCardText) => {
 
 const cardSuccess = (response) => {
 	const card = response.data.card
+	loadingIcon.style.display = "none"
 	cardTitle.innerHTML = `<h2>${card.name}</h2>`
 	// Some cards don't have rule text, so use flavor text instead.
 	banjoSpeakAndSet(card.text || card.flavor)
@@ -140,6 +142,7 @@ const cardSuccess = (response) => {
 // Getting a card from form
 const getCardSetup = () => {
 	textBox.style.display = "none"
+	loadingIcon.style.display = "block"
 	cardTitle.innerHTML = ''
 	cardDescription.innerHTML = ''
 	// Because all of our timeouts are in arrays

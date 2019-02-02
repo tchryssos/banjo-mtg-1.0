@@ -6,6 +6,10 @@ body {
     background-size: cover;
 }
 
+h2 {
+    margin: 16px;
+}
+
 /* Reusable */
 .container {
     display: flex;
@@ -41,7 +45,7 @@ body {
     width: 200px;
 }
 
-@keyframes rotate {
+@keyframes headRotate {
     from {transform: rotate(7deg);}
     to {transform: rotate(-21deg);}
 }
@@ -50,7 +54,7 @@ body {
     height: 100px;
     width: 100px;
     margin-right: 8px;
-    animation-name: rotate;
+    animation-name: headRotate;
     animation-duration: 0.3s;
     animation-iteration-count: infinite;
     animation-direction: alternate;
@@ -70,4 +74,20 @@ body {
     width: 100%;
     min-height: 2rem;
     align-items: center
+}
+
+@keyframes loadingRotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+
+#loadingIcon {
+    display: none;
+    margin: 16px;
+    height: 48px;
+    width: 48px;
+    animation-name: loadingRotate;
+    animation-duration: .7s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }
