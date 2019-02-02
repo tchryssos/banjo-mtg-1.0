@@ -73,15 +73,15 @@ const stopAllAudio = () => (
 )
 
 // Responding to card data
-const playSyllablePushWord = (syllables, audio) => {
-	for (let i = 0; i < audio.length; i++) {
+const playSyllablePushWord = (syllables, audioArray) => {
+	for (let i = 0; i < audioArray.length; i++) {
 		syllableTimeouts.push(setTimeout(() => {
-			playAudio(audio[i])
+			playAudio(audioArray[i])
 			cardDescription.innerHTML += syllables[i]
-			if (i === audio.length - 1) {
+			if (i === audioArray.length - 1) {
 				cardDescription.innerHTML += ' '
 			}
-		}, (i * audio[i].duration * 1000)))
+		}, (i * (audioArray[i].duration || .05) * 1000)))
 	}
 }
 
@@ -101,7 +101,7 @@ const banjoSpeakAndSet = (responseCardText) => {
 					(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
 				))
 			} else {
-				audioDuration = 0
+				audioDuration = 500
 			}
 			wordTimeouts.push(setTimeout(
 				() => playSyllablePushWord(syllables, audioArray),
@@ -135,24 +135,16 @@ const getCard = () => {
 	stopAllAudio()
 	getCardSetup()
 	const cardId = document.getElementById('cardId').value
-	cardSuccess({
-		data: {
-			card: {
-				name: 'Good card',
-				text: 'Wow what an absolutely spicy card, this one is good to play'
-			}
-		}
-	})
-	// axios.get(`https://api.magicthegathering.io/v1/cards/${cardId}`)
-	// 	.then((response) => (
-	// 		cardSuccess(response)
-	// 	))
-	// 	.catch((error) => {
-	// 		const banjoError = document.getElementById('banjoFail')
-	// 		banjoError.pause()
-	// 		banjoError.currentTime = 0
-	// 		banjoError.play()
-	// 		cardTitle.innerHTML = '<h2>Error!</h2>'
-	// 		cardDescription.innerHTML = error.message
-	// 	})
+	axios.get(`https://api.magicthegathering.io/v1/cards/${cardId}`)
+		.then((response) => (
+			cardSuccess(response)
+		))
+		.catch((error) => {
+			const banjoError = document.getElementById('banjoFail')
+			banjoError.pause()
+			banjoError.currentTime = 0
+			banjoError.play()
+			cardTitle.innerHTML = '<h2>Error!</h2>'
+			cardDescription.innerHTML = error.message
+		})
 }
