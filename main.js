@@ -89,7 +89,7 @@ const playSyllablePushWord = (syllables, audioArray) => {
 			if (i === audioArray.length - 1) {
 				cardDescription.innerHTML += ' '
 			}
-		}, (i * (audioArray[i].duration || .5) * 1000)))
+		}, (i * audioArray[i].duration * 1000)))
 	}
 }
 
