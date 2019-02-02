@@ -47,7 +47,7 @@ const syllableWordChunker = (word) => {
 	wordChunkObj = sylBreaks.reduce(
 		(wordObj, syllableBreak) => {
 			// This builds a regex which selects a substring
-			// up to and including the current syllable break point
+			// up to and including the first instance of the current syllable break point
 			const regex = new RegExp(
 				'(^[^'+ syllableBreak + ']*' + syllableBreak + ')'
 			)
