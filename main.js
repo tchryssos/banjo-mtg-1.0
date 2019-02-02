@@ -2,9 +2,6 @@
 const loSource = 'assets/BanjoLo.wav'
 const midSource = 'assets/BanjoMid.wav'
 const hiSource = 'assets/BanjoHi.wav'
-// const loSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoLo.wav'
-// const midSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoMid.wav'
-// const hiSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoHi.wav'
 const banjoLo = document.getElementById('banjoLo')
 const banjoMid = document.getElementById('banjoMid')
 const banjoHi = document.getElementById('banjoHi')
@@ -18,6 +15,8 @@ const cardDescription = document.getElementById('cardDescription')
 const textBox = document.getElementById('textBox')
 
 // Timeouts
+// Timeouts get pushed into one of these two arrays so that we can do a 
+// 'clearTimeout' inside a 'forEach' loop, ending all sample triggering.
 const syllableTimeouts = []
 const wordTimeouts = []
 
@@ -45,27 +44,25 @@ const syllableWordChunker = (word) => {
 		chunkedWord: [],
 	}
 	const sylBreaks = syllableBreaker(word)
-	if (sylBreaks) {
-		wordChunkObj = sylBreaks.reduce(
-			(wordObj, syllableBreak) => {
-				// This builds a regex which selects a substring
-				// up to and including the current syllable break point
-				const regex = new RegExp(
-					'(^[^'+ syllableBreak + ']*' + syllableBreak + ')'
-				)
-				let split = []
-				// This filter removes empty strings created when the regex test
-				// splits up a string on the first character
-				if (wordObj.remainingWord) {
-					split = wordObj.remainingWord.split(regex).filter(x => x)
-				}
-				return {
-					remainingWord: split[1],
-					chunkedWord: [...wordObj.chunkedWord, split[0]]
-				}
-			}, wordChunkObj
-		)
-	}
+	wordChunkObj = sylBreaks.reduce(
+		(wordObj, syllableBreak) => {
+			// This builds a regex which selects a substring
+			// up to and including the current syllable break point
+			const regex = new RegExp(
+				'(^[^'+ syllableBreak + ']*' + syllableBreak + ')'
+			)
+			let split = []
+			// This filter removes empty strings created when the regex test
+			// splits up a string on the first character
+			if (wordObj.remainingWord) {
+				split = wordObj.remainingWord.split(regex).filter(x => x)
+			}
+			return {
+				remainingWord: split[1],
+				chunkedWord: [...wordObj.chunkedWord, split[0]]
+			}
+		}, wordChunkObj
+	)
 	wordChunkObj.chunkedWord.push(wordChunkObj.remainingWord)
 	// This filter removes falsey values pushed on the line above
 	return wordChunkObj.chunkedWord.filter(x => x)
@@ -75,6 +72,7 @@ const syllableWordChunker = (word) => {
 const samplePicker = () => banjoSampleArray[Math.floor(Math.random() * 3)]
 
 const playAudio = (audio) => {
+	// This guarantees that we always start a sample from the beginning
 	audio.pause()
 	audio.currentTime = 0
 	audio.play()
@@ -93,6 +91,7 @@ const playSyllablePushWord = (syllables, audioArray) => {
 			playAudio(audioArray[i])
 			cardDescription.innerHTML += syllables[i]
 			// add a space if this is the last time through the loop
+			// aka the end of the word
 			if (i === audioArray.length - 1) {
 				cardDescription.innerHTML += ' '
 			}
@@ -106,6 +105,17 @@ const banjoSpeakAndSet = (responseCardText) => {
 	let banjoPause = 0
 	words.forEach(
 		(word) => {
+			/*
+				1) Get an array of the given word's syllable break points
+				2) Get an array consisting of one audio sample per syllable
+				3) Add the durations of these audio samples together.
+					(The durations are in seconds, so convert to milliseconds)
+				4) Create a timeout function that plays audio samples and writes the words to the page.
+					This is delayed by the current total audio duration of all samples for all words preceeding,
+					so that each word is added and played in order.
+					Push this timeout into the appropriate timeout array.
+				5) Update the timeout timer for the next iteration with this word's audio duration.
+			*/
 			const syllables = syllableWordChunker(word)
 			const audioArray = syllables.map(syl => samplePicker())
 			const audioDuration = Math.ceil(audioArray.reduce(
@@ -123,6 +133,7 @@ const banjoSpeakAndSet = (responseCardText) => {
 const cardSuccess = (response) => {
 	const card = response.data.card
 	cardTitle.innerHTML = `<h2>${card.name}</h2>`
+	// Some cards don't have rule text, so use flavor text instead.
 	banjoSpeakAndSet(card.text || card.flavor)
 }
 
@@ -131,9 +142,13 @@ const getCardSetup = () => {
 	textBox.style.display = "none"
 	cardTitle.innerHTML = ''
 	cardDescription.innerHTML = ''
+	// Because all of our timeouts are in arrays
+	// we can loop over them to stop all sample playback and word printing.
 	wordTimeouts.forEach(timeout => clearTimeout(timeout))
 	syllableTimeouts.forEach(timeout => clearTimeout(timeout))
 
+	// Because of an Audio API quirk, the best way to stop all audio is to
+	// remove the audio source. We reset these sources on setup.
 	banjoLo.src = loSource
 	banjoMid.src = midSource
 	banjoHi.src = hiSource
