@@ -103,16 +103,9 @@ const banjoSpeakAndSet = (responseCardText) => {
 			(word) => {
 				const syllables = syllableWordChunker(word)
 				const audioArray = syllables.map(syl => samplePicker())
-				let audioDuration
-				if (audioArray.every(
-					sample => sample.duration
-				)) {
-					audioDuration = Math.ceil(audioArray.reduce(
+				const audioDuration = Math.ceil(audioArray.reduce(
 						(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
 					))
-				} else {
-					audioDuration = 500
-				}
 				wordTimeouts.push(setTimeout(
 					() => playSyllablePushWord(syllables, audioArray),
 					banjoPause
