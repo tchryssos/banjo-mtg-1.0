@@ -86,6 +86,11 @@ const stopAllAudio = () => (
 )
 
 // Responding to card data
+const descriptionOverflow = () => {
+	if (cardDescription.offsetHeight < cardDescription.scrollHeight) {
+		cardDescription.scrollTop = cardDescription.scrollHeight
+	}
+}
 const playSyllablePushWord = (syllables, audioArray) => {
 	for (let i = 0; i < audioArray.length; i++) {
 		syllableTimeouts.push(setTimeout(() => {
@@ -96,6 +101,7 @@ const playSyllablePushWord = (syllables, audioArray) => {
 			if (i === audioArray.length - 1) {
 				cardDescription.innerHTML += ' '
 			}
+			descriptionOverflow()
 		}, (i * audioArray[i].duration * 1000)))
 	}
 }
