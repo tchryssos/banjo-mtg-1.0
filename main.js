@@ -1,7 +1,10 @@
 // Audio Elements
-const loSource = 'assets/banjoLo.wav'
-const midSource = 'assets/banjoMid.wav'
-const hiSource = 'assets/banjoHi.wav'
+// const loSource = 'assets/banjoLo.wav'
+// const midSource = 'assets/banjoMid.wav'
+// const hiSource = 'assets/banjoHi.wav'
+const loSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoLo.wav'
+const midSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoMid.wav'
+const hiSource = 'https://raw.githubusercontent.com/tchryssos/banjo-mtg/master/assets/BanjoHi.wav'
 const banjoLo = document.getElementById('banjoLo')
 const banjoMid = document.getElementById('banjoMid')
 const banjoHi = document.getElementById('banjoHi')
@@ -62,9 +65,6 @@ const syllableWordChunker = (word) => {
 }
 
 // Audio
-const audioLoadedPromise = (audio) => audio.onloadedmetadata = () => Promise.resolve()
-const allAudioLoadedPromises = banjoSampleArray.map(audio => audioLoadedPromise(audio))
-
 const samplePicker = () => banjoSampleArray[Math.floor(Math.random() * 3)]
 
 const playAudio = (audio) => {
@@ -97,23 +97,20 @@ const banjoSpeakAndSet = (responseCardText) => {
 	textBox.style = "display: flex;"
 	const words = responseCardText.split(/\s/)
 	let banjoPause = 0
-	Promise.all(allAudioLoadedPromises)
-	.then(() => (
-		words.forEach(
-			(word) => {
-				const syllables = syllableWordChunker(word)
-				const audioArray = syllables.map(syl => samplePicker())
-				const audioDuration = Math.ceil(audioArray.reduce(
-						(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
-					))
-				wordTimeouts.push(setTimeout(
-					() => playSyllablePushWord(syllables, audioArray),
-					banjoPause
+	words.forEach(
+		(word) => {
+			const syllables = syllableWordChunker(word)
+			const audioArray = syllables.map(syl => samplePicker())
+			const audioDuration = Math.ceil(audioArray.reduce(
+					(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
 				))
-				banjoPause += audioDuration
-			}
-		)
-	))
+			wordTimeouts.push(setTimeout(
+				() => playSyllablePushWord(syllables, audioArray),
+				banjoPause
+			))
+			banjoPause += audioDuration
+		}
+	)
 }
 
 const cardSuccess = (response) => {
