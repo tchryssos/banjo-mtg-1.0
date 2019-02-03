@@ -40,9 +40,14 @@ h2 {
     width: 100%;
 }
 
-.banjoImg {
+#banjoImg {
     height: 200px;
     width: 200px;
+    margin-top: 16px;
+    border: solid #fcfbd4 2px;
+    box-shadow: 0px 0px 32px #fcfbd4 inset, 0px 0px 32px #fcfbd4;
+    background-image: url("assets/house.jpg");
+    background-size: contain;
 }
 
 @keyframes headRotate {
