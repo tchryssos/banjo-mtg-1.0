@@ -138,7 +138,13 @@ const banjoSpeakAndSet = (responseCardText) => {
 }
 
 const cardSuccess = (response) => {
-	const card = response.data.card
+	const data = response.data
+	let card
+	// Searches by card name can return an array of cards with that name
+	// (such as when there are multiple editions of that card)
+	// Here, we're opting to take either the most relevant card from that list
+	// or, if the search was by id, the singular card with the id we requested
+	data.cards ? card = data.cards[0] : card = data.card
 	loadingIcon.style.display = "none"
 	cardTitle.innerHTML = `<h2>${card.name}</h2>`
 	// Some cards don't have rule text, so use flavor text instead.
@@ -163,20 +169,35 @@ const getCardSetup = () => {
 	banjoHi.src = hiSource
 }
 
+const cardError  = (error) => {
+	const banjoError = document.getElementById('banjoFail')
+	loadingIcon.style.display = "none"
+	playAudio(banjoError)
+	cardTitle.innerHTML = '<h2>Error!</h2>'
+	textBox.style = "display: flex;"
+	cardDescription.innerHTML = error.message
+}
+
+const isCardId = (cardVal) => !!parseInt(cardVal)
+
+const cardSearch = (cardVal) => {
+	const isId = isCardId(cardVal)
+	if (isId) {
+		return axios.get(`https://api.magicthegathering.io/v1/cards/${cardVal}`)
+	}
+	return axios.get(`https://api.magicthegathering.io/v1/cards/?name=${cardVal}`)
+}
+
 const getCard = () => {
 	stopAllAudio()
 	getCardSetup()
-	const cardId = document.getElementById('cardId').value
-	axios.get(`https://api.magicthegathering.io/v1/cards/${cardId}`)
-		.then((response) => (
-			cardSuccess(response)
-		))
-		.catch((error) => {
-			const banjoError = document.getElementById('banjoFail')
-			loadingIcon.style.display = "none"
-			playAudio(banjoError)
-			cardTitle.innerHTML = '<h2>Error!</h2>'
-			textBox.style = "display: flex;"
-			cardDescription.innerHTML = error.message
+	const cardVal = document.getElementById('cardField').value
+	cardSearch(cardVal)
+		.then((response) => {
+			if (!isCardId(cardVal) && response.data.cards.length === 0) {
+				throw new Error('No cards found with that name. Please try again.')
+			}
+			return cardSuccess(response)
 		})
+		.catch((error) => cardError(error))
 }
