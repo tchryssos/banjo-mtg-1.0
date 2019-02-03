@@ -30,7 +30,7 @@ const syllableBreaker = (word) => {
 	}
 	// The following lines replace all characters that aren't
 	// (commonly) syllable breakpoints with empty strings
-	// leaving us with an array of syllable break vowels
+	// leaving us with a string of syllable break vowels
 	word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
 	word = word.replace(/^y/, '')
 	// The following line makes sure that of the remaining vowels
