@@ -22,6 +22,7 @@ const syllableTimeouts = []
 const wordTimeouts = []
 
 // Syllable manipulation
+// Overall, this function works 'okay' ¯\_(ツ)_/¯
 const syllableBreaker = (word) => {
 	word = word.toLowerCase()
 	const oneSyl = ['fff']
@@ -174,7 +175,7 @@ const cardError  = (error) => {
 	loadingIcon.style.display = "none"
 	playAudio(banjoError)
 	cardTitle.innerHTML = '<h2>Error!</h2>'
-	textBox.style = "display: flex;"
+	textBox.style.display = "flex"
 	cardDescription.innerHTML = error.message
 }
 
