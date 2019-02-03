@@ -20,12 +20,13 @@
 		<audio id="banjoMid" src="assets/BanjoMid.wav"></audio>
 		<audio id="banjoHi" src="assets/BanjoHi.wav"></audio>
 		<audio id="banjoFail" src="assets/banjoFail.wav"></audio>
-		<div class="width75 centerText">
+		<div class="width75 centerText" id="instructionText">
 			<p>Enter the Multiverse ID or name of a Magic the Gathering card to have Banjo read the card text!</p>
 		</div>
 		<div class="width100 container">
 				<input 
 					id="cardField"
+					class="width50"
 					placeholder="Multiverse ID or Card Name"
 				/>
 				<button onClick="getCard()" id="submitButton">Submit</button>
@@ -34,7 +35,7 @@
 				<svg viewBox="0 0 24 24" id="loadingIcon">
 					<path fill="#000000" d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
 				</svg>
-				<div id="cardTitle" ></div>
+				<div id="cardTitle"></div>
 				<div id="textBox">
 					<img
 						src="assets/banjoHead.png"

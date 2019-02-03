@@ -153,6 +153,13 @@ const cardSuccess = (response) => {
 }
 
 // Getting a card from form
+const fadeInstructions = () => {
+	const instr = document.getElementById('instructionText')
+	instr.addEventListener('transitionend', () => (
+		instr.style.display = 'none'
+	), false)
+	instr.classList.add('activeFade')
+}
 const getCardSetup = () => {
 	textBox.style.display = "none"
 	loadingIcon.style.display = "block"
@@ -193,11 +200,15 @@ const getCard = () => {
 	stopAllAudio()
 	getCardSetup()
 	const cardVal = document.getElementById('cardField').value
+	if (!cardVal) {
+		return cardError(new Error('Please include a card ID or name.'))
+	}
 	cardSearch(cardVal)
 		.then((response) => {
 			if (!isCardId(cardVal) && response.data.cards.length === 0) {
 				throw new Error('No cards found with that name. Please try again.')
 			}
+			fadeInstructions()
 			return cardSuccess(response)
 		})
 		.catch((error) => cardError(error))

@@ -1,3 +1,7 @@
+body, html {
+    height: 100%;
+}
+
 body {
     font-family: 'Gochi Hand', cursive;
     letter-spacing: 2px;
@@ -6,15 +10,18 @@ body {
     background-size: cover;
 }
 
+p {
+    margin: 0;
+}
+
 h2 {
-    margin: 16px;
+    margin: 0;
 }
 
 /* Reusable */
 .container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
 }
 
@@ -34,6 +41,11 @@ h2 {
     text-align: center;
 }
 
+.activeFade {
+    opacity: 0;
+    transition: visibility 0s 1.5s, opacity 1.5s linear;
+}
+
 /* Specifics */
 .pageContainer {
     height: 100%;
@@ -48,6 +60,54 @@ h2 {
     box-shadow: 0px 0px 32px #fcfbd4 inset, 0px 0px 32px #fcfbd4;
     background-image: url("assets/house.jpg");
     background-size: contain;
+}
+
+#instructionText {
+    margin-top: 16px;
+}
+
+#cardField {
+    margin-top: 16px;
+    height: 32px;
+    font-size: 16px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+#submitButton {
+    width: 33%;
+    height: 32px;
+    margin-top: 16px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+#loadingIcon {
+    display: none;
+    margin: 16px;
+    height: 48px;
+    width: 48px;
+    animation-name: loadingRotate;
+    animation-duration: .7s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+#cardTitle {
+    margin-top: 16px;
+    margin-bottom: 0px;
+}
+
+#textBox {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 25px;
+    padding: 16px;
+    margin-top: 16px;
+    display: none;
+    color: white;
+    width: 100%;
+    min-height: 2rem;
+    align-items: center;
 }
 
 @keyframes headRotate {
@@ -66,34 +126,6 @@ h2 {
     animation-timing-function: linear;
 }
 
-#cardField {
-    margin-bottom: 8px;
-    width: 50%;
-    height: 32px;
-    font-size: 16px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-#textBox {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 25px;
-    padding: 16px;
-    display: none;
-    color: white;
-    width: 100%;
-    min-height: 2rem;
-    align-items: center;
-}
-
-#submitButton {
-    width: 33%;
-    height: 32px;
-    margin-top: 8px;
-    border-radius: 8px;
-    font-size: 16px;
-}
-
 #cardDescription {
     max-height: 56px;
     overflow: hidden;
@@ -104,13 +136,46 @@ h2 {
     to {transform: rotate(360deg);}
 }
 
-#loadingIcon {
-    display: none;
-    margin: 16px;
-    height: 48px;
-    width: 48px;
-    animation-name: loadingRotate;
-    animation-duration: .7s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
+@media only screen and (max-width: 600px) {
+    h2 {
+        font-size: 1.3em;
+    }
+
+    .width50 {
+        width: 90%;
+    }
+
+    #banjoImg {
+        height: 150px;
+        width: 150px;
+    }
+
+    #cardField {
+        height: 40px;
+    }
+
+    #submitButton {
+        width: 50%;
+        height: 48px;
+    }
+
+    #banjoHead {
+        height: 75px;
+        width: 75px;
+    }
+
+    #textBox {
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    body {
+        font-size: 16px;
+    }
+
+    .pageContainer {
+        justify-content: space-around;
+    }
 }
