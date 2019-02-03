@@ -8,6 +8,9 @@ const banjoHi = document.getElementById('banjoHi')
 const banjoSampleArray = [
 	banjoLo, banjoMid, banjoHi,
 ]
+// Multiplier to convert seconds from audio duration to milliseconds
+// By dropping the multiplier from 1000, we're able to speed up playback.
+const audioTimeMult = 850
 
 // Display Elements
 const cardTitle = document.getElementById('cardTitle')
@@ -74,8 +77,11 @@ const syllableWordChunker = (word) => {
 const samplePicker = () => banjoSampleArray[Math.floor(Math.random() * 3)]
 
 const playAudio = (audio) => {
-	// This guarantees that we always start a sample from the beginning
-	audio.pause()
+	// This pauses any playing audio before playback of the next sample
+	// which allows us to speed up sample playback more naturally.
+	banjoSampleArray.forEach(sample => {
+		sample.pause()
+	})
 	audio.currentTime = 0
 	audio.play()
 }
@@ -103,7 +109,7 @@ const playSyllablePushWord = (syllables, audioArray) => {
 				cardDescription.innerHTML += ' '
 			}
 			descriptionOverflow()
-		}, (i * audioArray[i].duration * 1000)))
+		}, (i * audioArray[i].duration * audioTimeMult)))
 	}
 }
 
@@ -127,7 +133,7 @@ const banjoSpeakAndSet = (responseCardText) => {
 			const syllables = syllableWordChunker(word)
 			const audioArray = syllables.map(syl => samplePicker())
 			const audioDuration = Math.ceil(audioArray.reduce(
-					(totalTime, audioObj) => totalTime += (audioObj.duration * 1000), 0
+					(totalTime, audioObj) => totalTime += (audioObj.duration * audioTimeMult), 0
 				))
 			wordTimeouts.push(setTimeout(
 				() => playSyllablePushWord(syllables, audioArray),
