@@ -68,6 +68,11 @@ h2 {
 
 #cardId {
     margin-bottom: 8px;
+    width: 50%;
+    height: 32px;
+    font-size: 16px;
+    border-radius: 8px;
+    text-align: center;
 }
 
 #textBox {
@@ -79,6 +84,14 @@ h2 {
     width: 100%;
     min-height: 2rem;
     align-items: center;
+}
+
+#submitButton {
+    width: 33%;
+    height: 32px;
+    margin-top: 8px;
+    border-radius: 8px;
+    font-size: 16px;
 }
 
 #cardDescription {
