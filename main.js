@@ -173,8 +173,10 @@ const getCard = () => {
 		))
 		.catch((error) => {
 			const banjoError = document.getElementById('banjoFail')
+			loadingIcon.style.display = "none"
 			playAudio(banjoError)
 			cardTitle.innerHTML = '<h2>Error!</h2>'
+			textBox.style = "display: flex;"
 			cardDescription.innerHTML = error.message
 		})
 }
