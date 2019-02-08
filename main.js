@@ -29,7 +29,7 @@ const wordTimeouts = []
 const syllableBreaker = (word) => {
 	word = word.toLowerCase()
 	const oneSyl = ['fff']
-	if (word.length <= 3) {
+	if (word.length <= 4) {
 		return oneSyl
 	}
 	// The following lines replace all characters that aren't
