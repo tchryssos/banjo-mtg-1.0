@@ -1,3 +1,5 @@
+# This 1.0 version of Banjo-MTG is no longer being developed. See [Banjo-MTG 2.0](https://github.com/tchryssos/banjo-mtg)
+
 # BANJO MTG
 
 ## Description
